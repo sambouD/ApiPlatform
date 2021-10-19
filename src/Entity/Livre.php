@@ -30,42 +30,51 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *           "method" = "GET",
  *            "path" = "/adherent/livres",
  *             "normalization_context" = {
- *                  "groups"={"get_role_adherent"}
+ *                  "groups"={"get_livres_role_adherent"}
  * 
  *              }
  *          },
  *      "get_coll_role_manager" = {
  *           "method" = "GET",
  *            "path" = "/manager/livres",
- *             "access_control" = "is_granted('ROLE_MANAGER')",
- *              "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
+ *             "security" = "is_granted('ROLE_MANAGER')",
+ *              "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
  *          },
  *          "post" ={
  *              "method" = "POST",
- *              "access_control" = "is_granted('ROLE_MANAGER')",
- *              "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
- *             }
+ *              "security" = "is_granted('ROLE_MANAGER')",
+ *              "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
+ *             },
+ *          "meilleurslivres" ={
+ *                  "method" = "GET",
+ *                  "route_name" = "meilleurslivres",
+ *                  "controller" = StatsController::class,
+ *                  "normalization_context" = {
+ *                  "groups"={"get_adherent"}
+ * 
+ *                  }
+ *              }
  *      },  
  *   itemOperations = {
  *          "get_item_role_adherent" = {
  *           "method" = "GET",
  *            "path" = "/adherent/livres/{id}",
  *             "normalization_context" = {
- *                  "groups"={"get_role_adherent"}
+ *                  "groups"={"get_delivres_role_adherent"}
  * 
  *              }
  *          },
  *      "get_item_role_manager" = {
  *           "method" = "GET",
  *            "path" = "/manager/livres/{id}",
- *             "access_control" = "is_granted('ROLE_MANAGER')",
- *              "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
+ *             "security" = "is_granted('ROLE_MANAGER')",
+ *              "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
  *          },
  *      "put_item_role_manager" = {
  *           "method" = "PUT",
  *            "path" = "/manager/livres/{id}",
- *            "access_control" = "is_granted('ROLE_MANAGER')",
- *            "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource",
+ *            "security" = "is_granted('ROLE_MANAGER')",
+ *            "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource",
  *             "denormalization_context" = {
  *                  "groups"={"put_manager"}
  * 
@@ -74,15 +83,15 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      "put_item_role_admin" = {
  *           "method" = "PUT",
  *            "path" = "/admin/livres/{id}",
- *            "access_control" = "is_granted('ROLE_ADMIN')",
- *            "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
+ *            "security" = "is_granted('ROLE_ADMIN')",
+ *            "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
  *          },
  * 
  *       "delete" = {
  *           "method" = "DELETE",
  *            "path" = "/admin/livres/{id}",
- *            "access_control" = "is_granted('ROLE_ADMIN')",
- *            "access_control_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
+ *            "security" = "is_granted('ROLE_ADMIN')",
+ *            "security_message" = "Vous n'avez pas les droits d'accéder à cette ressource"
  *          }
  * 
  * 
@@ -148,7 +157,8 @@ class Livre
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_role_adherent"})
+     * @Groups({"get_livres_role_adherent", "get_delivres_role_adherent"})
+     * @Groups({"get_adherent"})
      */
     private $isbn;
 
@@ -156,21 +166,20 @@ class Livre
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(min=2, max=100, minMessage = "Le titre doit contenir au moins {{ limit }} caractères", 
      * maxMessage="le titre doit contenir au plus {{ limit }} caractères")
-     * @Groups({"get_role_adherent", "put_manager"})
+     * @Groups({"get_livres_role_adherent", "put_manager", "get_adherent", "get_delivres_role_adherent"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Assert\Range(min=5, max=400, notInRangeMessage ="Le prix doit être comprise entre {{ min }} € et {{ max }} €" )
-     * 
      */
     private $prix;
 
     /**
      * @ORM\ManyToOne(targetEntity=Genre::class, inversedBy="livres")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get_role_adherent", "put_manager"})
+     * @Groups({"get_livres_role_adherent", "put_manager", "get_delivres_role_adherent"})
      * 
      */
     private $genre;
@@ -178,26 +187,26 @@ class Livre
     /**
      * @ORM\ManyToOne(targetEntity=Editeur::class, inversedBy="livres")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get_role_adherent","put_manager"})
+     * @Groups({"get_livres_role_adherent","put_manager"})
      */
     private $editeur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Auteur::class, inversedBy="livres")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get_role_adherent","put_manager"})
+     * @Groups({"get_livres_role_adherent","put_manager", "get_delivres_role_adherent"})
      */
     private $auteur;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"get_role_adherent","put_manager"})
+     * @Groups({"get_livres_role_adherent","put_manager", "get_delivres_role_adherent"})
      */
     private $annee;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_role_adherent", "put_manager"})
+     * @Groups({"get_livres_role_adherent", "put_manager"})
      */
     private $langue;
 
@@ -207,8 +216,14 @@ class Livre
      */
     private $prets;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $dispo;
+
     public function __construct()
     {
+        $this->adherent = new ArrayCollection();
         $this->prets = new ArrayCollection();
     }
 
@@ -339,6 +354,18 @@ class Livre
                 $pret->setLivre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDispo(): ?bool
+    {
+        return $this->dispo;
+    }
+
+    public function setDispo(?bool $dispo): self
+    {
+        $this->dispo = $dispo;
 
         return $this;
     }

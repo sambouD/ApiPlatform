@@ -56,7 +56,8 @@ class ApiAuteurController extends AbstractController
      * Crée un auteur
      * @Route("/api/auteurs", name="api_auteurs_create", methods={"POST"})
      */
-    public function create(NationaliteRepository $nationalite, Request $req, EntityManagerInterface $manager ,SerializerInterface $serializer, ValidatorInterface $validator)
+    public function create(NationaliteRepository $nationalite, Request $req, EntityManagerInterface $manager ,
+    SerializerInterface $serializer, ValidatorInterface $validator)
     {
       $data = $req->getContent();
       $format = "json";
@@ -90,7 +91,8 @@ class ApiAuteurController extends AbstractController
      * modifier un Auteur
      * @Route("/api/auteurs/{id}", name="api_auteurs_update", methods={"PUT"})
      */
-    public function update(Auteur $auteur,Request $req,NationaliteRepository $nationalite, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function update(Auteur $auteur,Request $req,NationaliteRepository $nationalite, EntityManagerInterface $manager,
+     SerializerInterface $serializer, ValidatorInterface $validator)
     {
       
         $data = $req->getContent();
@@ -112,11 +114,9 @@ class ApiAuteurController extends AbstractController
         $manager->persist($auteur);
         $manager->flush();
        
-
         return new JsonResponse("L'auteur a bien été modifier", 
         Response::HTTP_OK, 
         [], true);//class qui herite de class response
-        
    
     }
 

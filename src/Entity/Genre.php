@@ -31,6 +31,7 @@ class Genre
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"get_livres_role_adherent", "get_delivres_role_adherent"})
      */
     private $id;
 
@@ -39,6 +40,7 @@ class Genre
      * 
      * @Assert\Length( min=2, max=50, minMessage = "Le libellé doit contenir au moins {{ limit }} caractères", 
      * maxMessage="doit contenir au plus {{ limit }} caractères")
+     * @Groups({"get_livres_role_adherent", "get_delivres_role_adherent"})
      */
     private $libelle;
 

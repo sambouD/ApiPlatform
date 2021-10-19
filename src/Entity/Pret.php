@@ -7,12 +7,26 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PretRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PretRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *          itemOperations ={
+ *              "get"={
+ *                  "method" = "GET",
+ *                  "path"="/prets/{id}",
+ *                  "security" = "(is_granted('ROLE_ADHERENT') and object.getAdherent() == user) or is_granted('ROLE_MANAGER')",
+ *                  "security_message" = "Vous ne pouvez avoir accès qu'à vos propres prêts! "
+ * 
+ *              }    
+ *          }
+ * 
+ * 
+ * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class Pret
 {
@@ -115,4 +129,17 @@ class Pret
 
         return $this;
     }
+
+
+    // /**
+    //  * @ORM\PrePersist
+    //  *
+    //  * @return void
+    //  */
+    // public function RendIndiDispoLivre(){
+    //         $this->getLivre()->setDispo(false);
+    // }
+
+   
+
 }

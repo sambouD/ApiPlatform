@@ -49,8 +49,7 @@ class AppFixtures extends Fixture
             $adherent->setNom($this->faker->lastName())
                      ->setPrenom($this->faker->firstName($genre[mt_rand(0,1)]))
                      ->setAdresse($this->faker->streetAddress())
-                     ->setCp($cp[mt_rand(0, sizeof($cp)-1)])
-                     ->setVille($this->faker->City)
+                     ->setCodeCommune($cp[mt_rand(0, sizeof($cp)-1)])
                      ->setTel($this->faker->phoneNumber())
                      ->setMail($adherent->getNom()."@gmail.com")
                     ->setPassword($this->passwordEncoder->encodePassword($adherent, $adherent->getNom()));

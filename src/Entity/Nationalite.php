@@ -17,12 +17,60 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      attributes = {
  *      "order" = {
  *          "libelle": "ASC"    
- *      }
+ *      },
+ *  "pagination_enabled" = false  
+ * },
+ * 
+ * collectionOperations = 
+ *          {
+ *              "get" = 
+ *                  {
+ *                      "method" = "GET",
+ *                      "normalization_context" = 
+ *                          {
+ *                              "groups" = {"get_auteur_role_adherent"}
+ *                          }
+ * 
+ *                  },
+ * 
+ *              "post" = {
+ *                       
+ *                      "method" = "POST",
+ *                      "security" = "is_granted('ROLE_ADMIN')",
+ *                      "security_message" = "Vous n'avez pas les droits d'accèder à cet fonction",
+ *                      "denormalization_context" = {
+ *                                  "groups" = {"put_role_manager"}
+ *                         }
+ * 
+ *                      
+ *                 }
+ *          
+ *          },
+ * 
+ * 
+ *      itemOperations = {
+ * 
+ *              "get" = {
+ *                      "method" = "GET",
+ *                      "normalization_context" = {
+ *                               "groups" = {"get_auteur_role_adherent"}
+ *                          }
+ * 
+ *                  },
+ *              "put" = {
+ *                      "method" = "PUT",
+ *                      "path" = "/nationalites/{id}",
+ *                      "security" = "is_granted('ROLE_ADMIN')",
+ *                      "security_message" = "Vous n'avez pas les droits d'accéder !",
+ *                      "denormalization_context" = {
+ *                              "groups" = {"put_role_manager"}
+ *      
+ *                          }
+ *                  }
+ * 
  * }
  * )
- * @UniqueEntity(
- *     fields={"libelle"},
- *      message="Le libellé {{ value }} est déjâ  prise, veuillez choisir un autre !")
+ * 
  */
 class Nationalite
 {
@@ -30,6 +78,7 @@ class Nationalite
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"get_auteur_role_adherent"})
      */
     private $id;
 
@@ -37,6 +86,7 @@ class Nationalite
      * @ORM\Column(type="string", length=255)
      * @Assert\Length( min=4, max=50, minMessage = "Le libellé doit contenir au moins {{ limit }} caractères", 
      * maxMessage="doit contenir au plus {{ limit }} caractères")
+     * @Groups({"get_auteur_role_adherent"})
      */
     private $libelle;
 
